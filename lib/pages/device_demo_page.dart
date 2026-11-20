@@ -171,7 +171,7 @@ class _DeviceDemoPageState extends State<DeviceDemoPage> {
       return;
     }
     final path = _photoPath;
-    if (path == null || !File(path).existsSync()) {
+    if (path == null || (!kIsWeb && !File(path).existsSync())) {
       _notice('Ambil/pilih foto terlebih dahulu.');
       return;
     }
@@ -198,7 +198,8 @@ class _DeviceDemoPageState extends State<DeviceDemoPage> {
 
   @override
   Widget build(BuildContext context) {
-    final photoExists = _photoPath != null && File(_photoPath!).existsSync();
+    final photoExists =
+        _photoPath != null && (kIsWeb || File(_photoPath!).existsSync());
     return Scaffold(
       appBar: AppBar(
         title: const Text('KosFinder · Device Demo'),
@@ -248,7 +249,9 @@ class _DeviceDemoPageState extends State<DeviceDemoPage> {
           if (photoExists)
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.file(File(_photoPath!), height: 200, fit: BoxFit.cover),
+              child: kIsWeb
+                  ? Image.network(_photoPath!, height: 200, fit: BoxFit.cover)
+                  : Image.file(File(_photoPath!), height: 200, fit: BoxFit.cover),
             )
           else
             const Text('Belum ada foto. Pilih foto JPG/PNG maksimal 5 MB.'),
